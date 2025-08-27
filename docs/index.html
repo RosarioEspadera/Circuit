@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mini LTSpice – DC Only</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <header>
+    <h1>Mini LTSpice (DC)</h1>
+    <div class="actions">
+      <button id="btn-add-R">Add Resistor</button>
+      <button id="btn-add-V">Add DC Source</button>
+      <button id="btn-add-C">Add Capacitor</button>
+      <button id="btn-add-L">Add Inductor</button>
+      <button id="btn-add-GND">Set Ground</button>
+      <button id="btn-sim">Simulate</button>
+      <button id="btn-clear">Clear</button>
+    </div>
+  </header>
+
+  <main>
+    <aside>
+      <h2>Components</h2>
+      <div id="list"></div>
+      <h2>Selected</h2>
+      <div id="selected"></div>
+      <h2>Results</h2>
+      <pre id="results"></pre>
+      <details>
+        <summary>Backend URL</summary>
+        <input id="backendUrl" type="text" value="http://localhost:8000" />
+      </details>
+    </aside>
+
+    <section class="canvas-wrap">
+      <svg id="canvas" width="1000" height="600"></svg>
+      <div class="hint">Tip: Click on canvas to place endpoints (n1, n2). Click a component to edit value.</div>
+    </section>
+  </main>
+
+  <footer>
+    DC-only: R, V solved. C=open, L=short at steady state. Click simulate to compute V/I/P.
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

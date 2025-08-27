@@ -1,0 +1,23 @@
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial}
+header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#111;color:#fff}
+header h1{margin:0;font-size:18px}
+header .actions button{margin-right:8px}
+main{display:flex;height:calc(100vh - 120px)}
+aside{width:300px;border-right:1px solid #ddd;padding:12px;overflow:auto}
+aside h2{margin:12px 0 6px;font-size:14px;color:#444}
+#list .comp{padding:6px;border:1px solid #ddd;border-radius:8px;margin-bottom:6px;cursor:pointer;background:#fafafa}
+#selected{padding:8px;border:1px dashed #bbb;min-height:60px}
+.canvas-wrap{flex:1;position:relative;background:#f7f7fb}
+#canvas{background:white;border:1px solid #ddd;margin:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.hint{position:absolute;left:20px;bottom:16px;color:#666}
+footer{padding:8px 16px;border-top:1px solid #ddd;color:#555;font-size:12px}
+svg text{font-size:10px;fill:#333}
+.node{fill:#333}
+.wire{stroke:#333;stroke-width:2}
+.comp-shape{stroke:#111;fill:none;stroke-width:2;cursor:pointer}
+.comp-selected{stroke-dasharray:4 2}
+.tag{fill:#fff;stroke:#aaa;stroke-width:1}
+input[type="text"],input[type="number"]{width:100%;padding:6px;margin:4px 0;border:1px solid #ccc;border-radius:6px}
+button{padding:6px 10px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer}
+button:hover{background:#f0f0f0}
+details{margin-top:8px}
