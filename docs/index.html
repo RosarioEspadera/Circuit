@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mini LTSpice – DC Only</title>
+  <title>Mini LTSpice – DC Only (Wired)</title>
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
@@ -15,6 +15,7 @@
       <button id="btn-add-C">Add Capacitor</button>
       <button id="btn-add-L">Add Inductor</button>
       <button id="btn-add-GND">Set Ground</button>
+      <button id="btn-add-W">Wire</button>
       <button id="btn-sim">Simulate</button>
       <button id="btn-clear">Clear</button>
     </div>
@@ -36,39 +37,20 @@
 
     <section class="canvas-wrap">
       <svg id="canvas" width="1000" height="600"></svg>
-      <div class="hint">Tip: Click on canvas to place endpoints (n1, n2). Click a component to edit value.</div>
+      <div class="hint">Tip: Click on canvas to place endpoints (n1, n2). Click a component to edit value. Use Wire mode to connect ports.</div>
     </section>
   </main>
 
   <footer>
-    DC-only: R, V solved. C=open, L=short at steady state. Click simulate to compute V/I/P.
+    DC-only: R, V solved. C=open, L=short at steady state.
   </footer>
 
   <script src="app.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script>
-  function getBackendUrl() {
-    return document.getElementById("backendUrl").value.replace(/\/$/, "");
-  }
-
-  function keepAlive() {
-    const url = getBackendUrl();
-    axios.get(url + "/health")
-      .then(response => {
-        console.log(`Keep-alive at ${new Date().toISOString()}: Status ${response.status}`);
-      })
-      .catch(error => {
-        console.error(`Backend unreachable at ${new Date().toISOString()}:`, error.message);
-      });
-  }
-
-  // Ping every 5 minutes
-  setInterval(keepAlive, 5 * 60 * 1000);
-
-  // Run once on page load
-  keepAlive();
-</script>
-
-
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    function getBackendUrl() { return document.getElementById("backendUrl").value.replace(/\/$/,""); }
+    async function keepAlive(){ const url=getBackendUrl(); try{ const r=await axios.get(url+"/health"); console.log("KeepAlive", r.status);}catch(e){console.warn("KeepAliveErr", e.message);} }
+    setInterval(keepAlive, 5*60*1000); keepAlive();
+  </script>
 </body>
 </html>
