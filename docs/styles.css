@@ -1,24 +1,35 @@
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:#f3f6fb}
-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#0b2447;color:#fff}
-header h1{margin:0;font-size:18px}
-header .actions button{margin-right:8px}
-main{display:flex;height:calc(100vh - 120px)}
-aside{width:320px;border-right:1px solid #ddd;padding:12px;overflow:auto;background:#fff}
-aside h2{margin:12px 0 6px;font-size:14px;color:#333}
-#list .comp{padding:6px;border:1px solid #eee;border-radius:8px;margin-bottom:6px;cursor:pointer;background:#fafafa}
-#selected{padding:8px;border:1px dashed #bbb;min-height:60px;background:#fff}
+/* styles.css — polished UI for Mini LTSpice editor */
+:root{
+  --bg:#f4f7fb; --panel:#fff; --accent:#0b66ff; --muted:#6b7280;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:#111;display:flex;flex-direction:column;height:100vh}
+header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#0b2447;color:#fff}
+header h1{margin:0;font-size:16px}
+.actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.actions button{background:#fff;color:#0b2447;border:none;padding:6px 8px;border-radius:6px;cursor:pointer;font-weight:600}
+.actions button:hover{transform:translateY(-1px)}
+.sep{width:1px;height:28px;background:rgba(255,255,255,0.12);margin:0 6px}
+.opt{color:#fff;font-size:13px;display:flex;align-items:center;gap:6px}
+main{flex:1;display:flex;overflow:hidden}
+aside{width:300px;background:var(--panel);padding:12px;border-right:1px solid #e6eefb;overflow:auto}
+aside h2{margin:8px 0 6px;font-size:13px;color:var(--muted)}
+#list .comp{padding:6px;border-radius:6px;background:#fafbff;border:1px solid #eef4ff;margin-bottom:6px;cursor:pointer}
+#list .comp:hover{background:#eef4ff}
+#selected{min-height:70px;padding:8px;border-radius:6px;border:1px dashed #dbeafe;background:#fff}
+#results{background:#0b2447;color:#fff;padding:8px;border-radius:6px;white-space:pre-wrap;max-height:220px;overflow:auto}
+
 .canvas-wrap{flex:1;position:relative;padding:12px}
-#canvas{background:white;border:1px solid #ddd;width:100%;height:100%;display:block}
-.hint{position:absolute;left:40px;bottom:24px;color:#666}
-svg text{font-size:11px;fill:#111}
-.node{fill:#111}
-.wire{stroke:#333;stroke-width:2}
-.comp-shape{stroke:#111;fill:none;stroke-width:2;cursor:pointer}
+#canvas{background:#fff;border:1px solid #e6eefb;width:100%;height:calc(100% - 10px);display:block}
+.hint{position:absolute;left:18px;bottom:12px;color:#666;font-size:12px}
+
+.wire{stroke:#333;stroke-width:2;stroke-linecap:round}
+.comp-shape{stroke:#111;stroke-width:2;fill:none;cursor:pointer}
 .port{fill:#111;stroke:#fff;stroke-width:1;cursor:pointer}
-.port.active{fill:#1e90ff}
 .port.hover{fill:#4da6ff}
-.comp-selected{stroke-dasharray:4 2}
+.port.active{fill:#ff6b6b}
 .tag{font-size:11px;fill:#222}
-button{padding:6px 10px;border:0;border-radius:6px;background:#fff;cursor:pointer}
-button:hover{background:#e6eefb}
-pre{background:#0b2447;color:#fff;padding:8px;border-radius:6px;overflow:auto}
+.selected-comp{stroke:var(--accent);stroke-width:3}
+.grid-dot{fill:#e6eefb}
+
+footer{background:#0b2447;color:#fff;padding:6px;text-align:center;font-size:12px}
