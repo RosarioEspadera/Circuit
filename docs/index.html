@@ -1,78 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Mini LTSpice (DC) — Editor</title>
-  <link rel="stylesheet" href="styles.css"/>
+<meta charset="utf-8">
+<title>LTSpice-like Editor (local)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header>
-    <h1>Mini LTSpice (DC)</h1>
-    <div class="actions">
-      <button id="btn-add-R" title="Place resistor (R)">R</button>
-      <button id="btn-add-V" title="Place DC voltage source (V)">V</button>
-      <button id="btn-add-I" title="Place DC current source (I)">I</button>
-      <button id="btn-add-C" title="Place capacitor (C)">C</button>
-      <button id="btn-add-L" title="Place inductor (L)">L</button>
-      <button id="btn-add-D" title="Place diode (D)">D</button>
-      <button id="btn-add-GND" title="Set ground for port">GND</button>
-      <button id="btn-add-W" title="Wire (click-to-click, persistent)">Wire</button>
-
-      <span class="sep"></span>
-
-      <button id="btn-move" title="Move components (drag)">Move</button>
-      <button id="btn-rotate" title="Rotate selected 90°">Rotate</button>
-      <button id="btn-copy" title="Copy selected">Copy</button>
-      <button id="btn-del" title="Delete selected or press Del">Delete</button>
-
-      <span class="sep"></span>
-
-      <label class="opt"><input type="checkbox" id="opt-ortho"/> Orthogonal wires</label>
-      <button id="btn-sim" title="Run DC simulation">Simulate</button>
-      <button id="btn-netlist" title="Generate SPICE-like netlist">Netlist</button>
-      <button id="btn-clear" title="Clear canvas">Clear</button>
-    </div>
-  </header>
-
-  <main>
-    <aside>
-      <h2>Components</h2>
-      <div id="list"></div>
-
-      <h2>Selected</h2>
-      <div id="selected"></div>
-
-      <h2>Probe & Results</h2>
-      <pre id="results">No simulation run yet.</pre>
-
-      <details>
-        <summary>Backend URL (simulate)</summary>
-        <input id="backendUrl" type="text" value="https://circuit-rc1c.onrender.com"/>
-      </details>
-
-      <div style="margin-top:8px">
-        <button id="btn-help">Help</button>
-      </div>
-    </aside>
-
-    <section class="canvas-wrap">
-      <svg id="canvas" width="1100" height="700"></svg>
-      <div class="hint">Tip: Select a tool then click two points to place. Ports are clickable. After sim, click a port/wire to probe node voltage.</div>
-    </section>
-  </main>
-
-  <footer>
-    Mini LTSpice — DC/Steady-state. C=open, L=short in DC. New: move/rotate/copy/delete, diode, ortho wires, netlist.
-  </footer>
-
-  <script src="app.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<div id="toolbar">
+  <button id="btn-add-R">R</button>
+  <button id="btn-add-V">V</button>
+  <button id="btn-add-I">I</button>
+  <button id="btn-add-C">C</button>
+  <button id="btn-add-L">L</button>
+  <button id="btn-add-D">D</button>
+  <button id="btn-add-GND">GND</button>
+  <button id="btn-add-W">Wire</button>
+  <button id="btn-move">Move</button>
+  <button id="btn-rotate">Rotate</button>
+  <button id="btn-copy">Copy</button>
+  <button id="btn-del">Del</button>
+  <button id="btn-clear">Clear</button>
+  <button id="btn-netlist">Netlist</button>
+  <button id="btn-sim">Sim</button>
+  <label>Backend: <input id="backendUrl" placeholder="https://circuit-rc1c.onrender.com"></label>
+  <label>Ortho <input id="opt-ortho" type="checkbox"></label>
+</div>
+<div id="container">
+  <div id="left">
+    <div id="list"></div>
+  </div>
+  <div id="center">
+    <svg id="canvas" width="900" height="600"></svg>
+  </div>
+  <div id="right">
+    <div id="selected"></div>
+    <div><pre id="results"></pre></div>
+  </div>
+</div>
+<script src="app.js"></script>
   <script>
-    function getBackendUrl(){ return document.getElementById('backendUrl').value.replace(/\/$/,''); }
-    async function keepAlive(){ try{ const r=await axios.get(getBackendUrl()+"/health"); console.log("backend:", r.status); }catch(e){ console.warn("keepAlive failed:", e.message); } }
-    setInterval(keepAlive, 5*60*1000); keepAlive();
-    document.getElementById('btn-help').onclick = ()=> alert("Tools: Pick component → click two grid points to place. Use Wire to connect ports. Move to drag. Rotate rotates selected. Copy duplicates. Delete removes. Netlist outputs a SPICE-like netlist. After simulate, click ports/wires to probe node voltage.");
+const url = `https://circuit-rc1c.onrender.com/`; // Replace with your Render URL
+const interval = 30000; // Interval in milliseconds (30 seconds)
+
+//Reloader Function
+function reloadWebsite() {
+  axios.get(url)
+    .then(response => {
+      console.log(`Reloaded at ${new Date().toISOString()}: Status Code ${response.status}`);
+    })
+    .catch(error => {
+      console.error(`Error reloading at ${new Date().toISOString()}:`, error.message);
+    });
+}
+
+setInterval(reloadWebsite, interval);
   </script>
 </body>
 </html>
