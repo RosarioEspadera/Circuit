@@ -24,6 +24,7 @@ aside h2{margin:8px 0 6px;font-size:13px;color:var(--muted)}
 .hint{position:absolute;left:18px;bottom:12px;color:#666;font-size:12px}
 
 .wire{stroke:#333;stroke-width:2;stroke-linecap:round}
+.auto-node {fill: black;stroke: none;cursor: crosshair;}
 .comp-shape{stroke:#111;stroke-width:2;fill:none;cursor:pointer}
 .port{fill:#111;stroke:#fff;stroke-width:1;cursor:pointer}
 .port.hover{fill:#4da6ff}
