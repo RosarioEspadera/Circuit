@@ -45,12 +45,15 @@
   </footer>
 
   <script src="app.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-  const BACKEND_URL = "https://circuit-rc1c.onrender.com";
+  function getBackendUrl() {
+    return document.getElementById("backendUrl").value.replace(/\/$/, "");
+  }
 
   function keepAlive() {
-    axios.get(BACKEND_URL + "/health")
+    const url = getBackendUrl();
+    axios.get(url + "/health")
       .then(response => {
         console.log(`Keep-alive at ${new Date().toISOString()}: Status ${response.status}`);
       })
@@ -59,10 +62,13 @@
       });
   }
 
+  // Ping every 5 minutes
   setInterval(keepAlive, 5 * 60 * 1000);
 
+  // Run once on page load
   keepAlive();
 </script>
+
 
 </body>
 </html>
