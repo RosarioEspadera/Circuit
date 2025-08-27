@@ -1,23 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mini LTSpice – DC Only (Wired)</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Mini LTSpice (DC) — Editor</title>
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
   <header>
     <h1>Mini LTSpice (DC)</h1>
     <div class="actions">
-      <button id="btn-add-R">Add Resistor</button>
-      <button id="btn-add-V">Add DC Source</button>
-      <button id="btn-add-C">Add Capacitor</button>
-      <button id="btn-add-L">Add Inductor</button>
-      <button id="btn-add-GND">Set Ground</button>
-      <button id="btn-add-W">Wire</button>
-      <button id="btn-sim">Simulate</button>
-      <button id="btn-clear">Clear</button>
+      <button id="btn-add-R" title="Place resistor (R)">R</button>
+      <button id="btn-add-V" title="Place DC voltage source (V)">V</button>
+      <button id="btn-add-I" title="Place DC current source (I)">I</button>
+      <button id="btn-add-C" title="Place capacitor (C)">C</button>
+      <button id="btn-add-L" title="Place inductor (L)">L</button>
+      <button id="btn-add-D" title="Place diode (D)">D</button>
+      <button id="btn-add-GND" title="Set ground for port">GND</button>
+      <button id="btn-add-W" title="Wire (click-to-click, persistent)">Wire</button>
+
+      <span class="sep"></span>
+
+      <button id="btn-move" title="Move components (drag)">Move</button>
+      <button id="btn-rotate" title="Rotate selected 90°">Rotate</button>
+      <button id="btn-copy" title="Copy selected">Copy</button>
+      <button id="btn-del" title="Delete selected or press Del">Delete</button>
+
+      <span class="sep"></span>
+
+      <label class="opt"><input type="checkbox" id="opt-ortho"/> Orthogonal wires</label>
+      <button id="btn-sim" title="Run DC simulation">Simulate</button>
+      <button id="btn-netlist" title="Generate SPICE-like netlist">Netlist</button>
+      <button id="btn-clear" title="Clear canvas">Clear</button>
     </div>
   </header>
 
@@ -25,32 +39,40 @@
     <aside>
       <h2>Components</h2>
       <div id="list"></div>
+
       <h2>Selected</h2>
       <div id="selected"></div>
-      <h2>Results</h2>
-      <pre id="results"></pre>
+
+      <h2>Probe & Results</h2>
+      <pre id="results">No simulation run yet.</pre>
+
       <details>
-        <summary>Backend URL</summary>
-        <input id="backendUrl" type="text" value="https://circuit-rc1c.onrender.com" />
+        <summary>Backend URL (simulate)</summary>
+        <input id="backendUrl" type="text" value="https://circuit-rc1c.onrender.com"/>
       </details>
+
+      <div style="margin-top:8px">
+        <button id="btn-help">Help</button>
+      </div>
     </aside>
 
     <section class="canvas-wrap">
-      <svg id="canvas" width="1000" height="600"></svg>
-      <div class="hint">Tip: Click on canvas to place endpoints (n1, n2). Click a component to edit value. Use Wire mode to connect ports.</div>
+      <svg id="canvas" width="1100" height="700"></svg>
+      <div class="hint">Tip: Select a tool then click two points to place. Ports are clickable. After sim, click a port/wire to probe node voltage.</div>
     </section>
   </main>
 
   <footer>
-    DC-only: R, V solved. C=open, L=short at steady state.
+    Mini LTSpice — DC/Steady-state. C=open, L=short in DC. New: move/rotate/copy/delete, diode, ortho wires, netlist.
   </footer>
 
   <script src="app.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
-    function getBackendUrl() { return document.getElementById("backendUrl").value.replace(/\/$/,""); }
-    async function keepAlive(){ const url=getBackendUrl(); try{ const r=await axios.get(url+"/health"); console.log("KeepAlive", r.status);}catch(e){console.warn("KeepAliveErr", e.message);} }
+    function getBackendUrl(){ return document.getElementById('backendUrl').value.replace(/\/$/,''); }
+    async function keepAlive(){ try{ const r=await axios.get(getBackendUrl()+"/health"); console.log("backend:", r.status); }catch(e){ console.warn("keepAlive failed:", e.message); } }
     setInterval(keepAlive, 5*60*1000); keepAlive();
+    document.getElementById('btn-help').onclick = ()=> alert("Tools: Pick component → click two grid points to place. Use Wire to connect ports. Move to drag. Rotate rotates selected. Copy duplicates. Delete removes. Netlist outputs a SPICE-like netlist. After simulate, click ports/wires to probe node voltage.");
   </script>
 </body>
 </html>
