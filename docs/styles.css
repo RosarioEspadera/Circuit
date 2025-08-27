@@ -1,36 +1,23 @@
-/* styles.css — polished UI for Mini LTSpice editor */
-:root{
-  --bg:#f4f7fb; --panel:#fff; --accent:#0b66ff; --muted:#6b7280;
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:#111;display:flex;flex-direction:column;height:100vh}
-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#0b2447;color:#fff}
-header h1{margin:0;font-size:16px}
-.actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.actions button{background:#fff;color:#0b2447;border:none;padding:6px 8px;border-radius:6px;cursor:pointer;font-weight:600}
-.actions button:hover{transform:translateY(-1px)}
-.sep{width:1px;height:28px;background:rgba(255,255,255,0.12);margin:0 6px}
-.opt{color:#fff;font-size:13px;display:flex;align-items:center;gap:6px}
-main{flex:1;display:flex;overflow:hidden}
-aside{width:300px;background:var(--panel);padding:12px;border-right:1px solid #e6eefb;overflow:auto}
-aside h2{margin:8px 0 6px;font-size:13px;color:var(--muted)}
-#list .comp{padding:6px;border-radius:6px;background:#fafbff;border:1px solid #eef4ff;margin-bottom:6px;cursor:pointer}
-#list .comp:hover{background:#eef4ff}
-#selected{min-height:70px;padding:8px;border-radius:6px;border:1px dashed #dbeafe;background:#fff}
-#results{background:#0b2447;color:#fff;padding:8px;border-radius:6px;white-space:pre-wrap;max-height:220px;overflow:auto}
-
-.canvas-wrap{flex:1;position:relative;padding:12px}
-#canvas{background:#fff;border:1px solid #e6eefb;width:100%;height:calc(100% - 10px);display:block}
-.hint{position:absolute;left:18px;bottom:12px;color:#666;font-size:12px}
-
-.wire{stroke:#333;stroke-width:2;stroke-linecap:round}
-.auto-node {fill: black;stroke: none;cursor: crosshair;}
-.comp-shape{stroke:#111;stroke-width:2;fill:none;cursor:pointer}
-.port{fill:#111;stroke:#fff;stroke-width:1;cursor:pointer}
-.port.hover{fill:#4da6ff}
-.port.active{fill:#ff6b6b}
-.tag{font-size:11px;fill:#222}
-.selected-comp{stroke:var(--accent);stroke-width:3}
-.grid-dot{fill:#e6eefb}
-
-footer{background:#0b2447;color:#fff;padding:6px;text-align:center;font-size:12px}
+body{font-family:sans-serif;margin:0;height:100vh;display:flex;flex-direction:column}
+#toolbar{background:#222;color:#fff;padding:6px;display:flex;gap:6px;align-items:center}
+#container{flex:1;display:flex;min-height:0}
+#left{width:200px;border-right:1px solid #ddd;overflow:auto;padding:6px;background:#f7f7f7}
+#center{flex:1;display:flex;align-items:center;justify-content:center;background:#fff}
+#right{width:300px;border-left:1px solid #ddd;padding:6px;overflow:auto;background:#f4f9f4}
+svg{background:linear-gradient(180deg,#fff,#f6f6f6);width:100%;height:100%}
+.grid-dot{fill:#eee;opacity:0.8}
+.wire{stroke:#333;stroke-width:2;fill:none}
+.comp-shape{stroke:#111;stroke-width:1.5;fill:none}
+.port{fill:#fff;stroke:#000;stroke-width:1}
+.port.hover{r:7}
+.tag{font-size:12px;fill:#111}
+.selected-comp{stroke:#00f;stroke-width:2;stroke-dasharray:4 2}
+.auto-node{fill:#000}
+.node-tag{font-size:10px;fill:#666}
+.net-label{font-size:12px;fill:#0a0;background:#eaffea;padding:2px}
+.port-tag{font-size:11px;fill:#333}
+.list-title{font-weight:bold;margin-top:8px}
+.comp{padding:4px;border-bottom:1px solid #eee;cursor:pointer}
+.wire-item{padding:3px;border-bottom:1px dashed #eee;cursor:pointer}
+.context-menu{position:absolute;background:#fff;border:1px solid #ccc;padding:6px;box-shadow:0 2px 8px rgba(0,0,0,0.15);z-index:999}
+.context-menu button{display:block;width:100%;border:none;background:none;padding:6px;text-align:left;cursor:pointer}
