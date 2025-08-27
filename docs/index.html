@@ -45,5 +45,24 @@
   </footer>
 
   <script src="app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  const BACKEND_URL = "https://circuit-rc1c.onrender.com";
+
+  function keepAlive() {
+    axios.get(BACKEND_URL + "/health")
+      .then(response => {
+        console.log(`Keep-alive at ${new Date().toISOString()}: Status ${response.status}`);
+      })
+      .catch(error => {
+        console.error(`Backend unreachable at ${new Date().toISOString()}:`, error.message);
+      });
+  }
+
+  setInterval(keepAlive, 5 * 60 * 1000);
+
+  keepAlive();
+</script>
+
 </body>
 </html>
