@@ -11,10 +11,20 @@ const orthoCheckbox = document.getElementById("opt-ortho");
 
 let comps = [];   // components placed {type,name,x1,y1,x2,y2,n1,n2,value,rot}
 let wires = [];   // wires placed {id,p1:{comp,port},p2:{comp,port},x1,y1,x2,y2,ortho}
+let autoNodes = []; // extra nodes created by clicking empty space
 let mode = null;  // current tool: 'R','V','I','C','L','D','GND','W','MOVE'
 let placing = null, activePort=null, selected=null, dragState=null;
 let lastSimResult = null;
 let idCounter = 1;
+
+function getOrCreateNodeAt(x, y) {
+  const gx = snap(x), gy = snap(y);
+  let existing = autoNodes.find(n => n.x === gx && n.y === gy);
+  if (existing) return existing.id;
+  const newId = "N" + (autoNodes.length + 1);
+  autoNodes.push({ id: newId, x: gx, y: gy });
+  return newId;
+}
 
 /* ---- Utilities ---- */
 const GRID = 20;
@@ -60,6 +70,20 @@ function redraw(){
       svg.appendChild(line);
     }
   });
+  // draw auto-nodes as small dots
+autoNodes.forEach(n => {
+  const circ = document.createElementNS("http://www.w3.org/2000/svg","circle");
+  circ.setAttribute("cx", n.x);
+  circ.setAttribute("cy", n.y);
+  circ.setAttribute("r", 3);
+  circ.setAttribute("class", "auto-node");
+  circ.addEventListener("click", ev => {
+    ev.stopPropagation();
+    if(mode === 'W') handleWireNodeClick(n, n.x, n.y);
+    else if(lastSimResult) alert(`${n.id} = ${lastSimResult.node_voltages[n.id] ?? 0} V`);
+  });
+  svg.appendChild(circ);
+});
   // components
   comps.forEach(c => drawComponent(c));
   refreshList();
@@ -228,28 +252,88 @@ function drawPort(comp, which, x, y){
 /* ---- Wire handling ---- */
 function handleWirePortClick(comp, which, x, y, el){
   if(!activePort){
-    activePort = {compName: comp.name, which, x,y, el};
+    activePort = {compName: comp.name, which, x, y, el, isNode:false};
     el.classList.add("active");
     return;
   }
-  // target
+
+  // === Node → Port ===
+  if(activePort.isNode){
+    const nodeId = activePort.which;
+    comp[which] = nodeId;
+    const wid = 'W'+(idCounter++);
+    const ortho = !!orthoCheckbox.checked;
+    wires.push({
+      id:wid,
+      p1:activePort,
+      p2:{compName:comp.name,which,x,y,isNode:false},
+      x1:activePort.x,y1:activePort.y,x2:x,y2:y, ortho
+    });
+    activePort = null;
+    redraw();
+    return;
+  }
+
+  // === Port-to-port (unchanged) ===
   if(activePort.compName === comp.name && activePort.which === which){
     activePort.el.classList.remove("active"); activePort = null; return;
   }
-  const a = activePort; const b = {compName:comp.name,which,x,y,el};
+  const a = activePort; const b = {compName:comp.name,which,x,y,el,isNode:false};
   const wid = 'W'+(idCounter++);
   const ortho = !!orthoCheckbox.checked;
-  wires.push({id:wid, p1:{comp:a.compName,port:a.which}, p2:{comp:b.compName,port:b.which}, x1:a.x,y1:a.y,x2:b.x,y2:b.y, ortho});
-  // merge nodes names (simple scheme): prefer existing explicit names
+  wires.push({id:wid, p1:a, p2:b, x1:a.x,y1:a.y,x2:b.x,y2:b.y, ortho});
+
+  // Merge node labels between ports
   const compA = comps.find(cc=>cc.name===a.compName);
   const compB = comps.find(cc=>cc.name===b.compName);
   const nameA = compA[a.which] || `${compA.name}_${a.which}`;
   compA[a.which] = nameA;
   compB[b.which] = nameA;
-  activePort.el.classList.remove("active"); activePort=null;
-  // stay in wire mode (persistent) per request — DO NOT set mode=null here
+
+  a.el.classList.remove("active"); activePort=null;
   redraw();
 }
+
+function handleWireNodeClick(node, x, y){
+  if(!activePort){
+    // First click = select this node
+    activePort = {compName: null, which: node.id, x, y, isNode: true};
+    return;
+  }
+
+  const a = activePort;
+  const b = {compName:null, which:node.id, x, y, isNode: true};
+  const wid = 'W'+(idCounter++);
+  const ortho = !!orthoCheckbox.checked;
+  wires.push({id:wid, p1:a, p2:b, x1:a.x,y1:a.y,x2:b.x,y2:b.y, ortho});
+
+  // === Node-to-node merge ===
+  if(a.isNode && b.isNode){
+    const keep = a.which;     // keep this label
+    const drop = b.which;     // replace this one
+    comps.forEach(c=>{
+      ["n1","n2"].forEach(p=>{
+        if(c[p] === drop) c[p] = keep;
+      });
+    });
+    wires.forEach(w=>{
+      if(w.p1.which === drop) w.p1.which = keep;
+      if(w.p2.which === drop) w.p2.which = keep;
+    });
+    console.log(`Merged node ${drop} → ${keep}`);
+  }
+
+  // === Node-to-port connection ===
+  if(a.compName){
+    const comp = comps.find(c => c.name === a.compName);
+    if(comp) comp[a.which] = node.id;
+  }
+
+  activePort = null;
+  redraw();
+}
+
+
 
 /* ---- Selection & editing actions ---- */
 function selectComponent(c){
@@ -530,6 +614,29 @@ svg.addEventListener('pointerdown', (ev)=>{
     else { placing.x2=x; placing.y2=y; placing.n1 = placing.name + '_n1'; placing.n2 = placing.name + '_n2'; comps.push(placing); placing=null; redraw(); }
   }
 });
+svg.addEventListener("click", (ev)=>{
+  const rect = svg.getBoundingClientRect();
+  const x = snap(ev.clientX - rect.left);
+  const y = snap(ev.clientY - rect.top);
+
+  if(mode === 'W'){
+    // click on empty space → create/use node
+    const nid = getOrCreateNodeAt(x,y);
+    const node = autoNodes.find(n=>n.id===nid);
+    handleWireNodeClick(node, node.x, node.y);
+    return;
+  }
+
+  if(mode && mode !== 'MOVE'){
+    handlePlacementClick(ev);
+    return;
+  }
+
+  selected = null;
+  showSelectedPanelEmpty();
+  redraw();
+});
+
 
 /* ---- initialize UI ---- */
 showSelectedPanelEmpty();
